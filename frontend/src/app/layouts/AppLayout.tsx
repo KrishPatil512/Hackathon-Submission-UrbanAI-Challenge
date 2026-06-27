@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router";
 
-import { DarkBackground, IconHome, IconBookmark, IconCompass, IconSocial, IconGear, IconBell } from "@/app/components/ui";
+import { IconHome, IconBookmark, IconCompass, IconSocial, IconGear, IconBell } from "@/app/components/ui";
 import { imgSWLogo, imgProfile } from "@/app/assets";
 import { useAuth } from "../../auth/AuthContext";
+import { useTheme } from "@/app/theme";
 
 const UNREAD = 3; // later this comes from global state / context
 
@@ -20,6 +20,9 @@ const navItems: NavDef[] = [
 
 function Sidebar() {
   const navigate = useNavigate();
+  const { darkMode } = useTheme();
+  const inactiveIcon = darkMode ? "rgba(255,255,255,0.35)" : "rgba(33,20,26,0.48)";
+  const divider = darkMode ? "rgba(255,255,255,0.06)" : "rgba(72,42,54,0.12)";
 
   const { user, user_loading, logout } = useAuth();
 
@@ -31,9 +34,9 @@ function Sidebar() {
   return (
     <div
       className="fixed flex flex-col items-start left-0 top-0 w-[256px] h-full z-10"
-      style={{ background: "rgba(10,6,8,0.65)", backdropFilter: "blur(20px)" }}
+      style={{ background: "var(--app-surface)", backdropFilter: "blur(20px)" }}
     >
-      <div aria-hidden className="absolute border-[rgba(255,255,255,0.07)] border-r border-solid inset-0 pointer-events-none" />
+      <div aria-hidden className="absolute border-r border-solid inset-0 pointer-events-none" style={{ borderColor: "var(--app-border)" }} />
 
       {/* Logo + bell */}
       <div className="relative shrink-0 w-full flex items-center justify-between pb-[20px] pt-[32px] px-[24px]">
@@ -47,7 +50,7 @@ function Sidebar() {
 
       {/* Section label */}
       <div className="px-[24px] mb-[6px]">
-        <p className="font-['Inter',sans-serif] font-medium text-[10px] text-[rgba(255,255,255,0.2)] tracking-[1px] uppercase">Navigation</p>
+        <p className="font-['Inter',sans-serif] font-medium text-[10px] tracking-[1px] uppercase" style={{ color: "var(--app-subtle)" }}>Navigation</p>
       </div>
 
       {/* Nav items */}
@@ -65,8 +68,8 @@ function Sidebar() {
             >
               {({ isActive }) => (
                 <>
-                  {icon(isActive ? "#c42050" : "rgba(255,255,255,0.35)")}
-                  <span className={`font-['Inter',sans-serif] font-medium text-[15px] tracking-[-0.15px] flex-1 ${isActive ? "text-[#c42050]" : "text-[rgba(255,255,255,0.55)]"}`}>
+                  {icon(isActive ? "#c42050" : inactiveIcon)}
+                  <span className="font-['Inter',sans-serif] font-medium text-[15px] tracking-[-0.15px] flex-1" style={{ color: isActive ? "#c42050" : "var(--app-muted)" }}>
                     {label}
                   </span>
                   {badge && (
@@ -83,7 +86,7 @@ function Sidebar() {
 
       {/* Divider */}
       <div className="w-full px-[24px] my-[8px]">
-        <div className="h-px bg-[rgba(255,255,255,0.06)]" />
+        <div className="h-px" style={{ background: divider }} />
       </div>
 
       {/* Settings + sign out */}
@@ -95,8 +98,8 @@ function Sidebar() {
         >
           {({ isActive }) => (
             <>
-              <IconGear color={isActive ? "#c42050" : "rgba(255,255,255,0.35)"} />
-              <span className={`font-['Inter',sans-serif] font-medium text-[15px] ${isActive ? "text-[#c42050]" : "text-[rgba(255,255,255,0.55)]"}`}>Settings</span>
+              <IconGear color={isActive ? "#c42050" : inactiveIcon} />
+              <span className="font-['Inter',sans-serif] font-medium text-[15px]" style={{ color: isActive ? "#c42050" : "var(--app-muted)" }}>Settings</span>
             </>
           )}
         </NavLink>
@@ -108,10 +111,10 @@ function Sidebar() {
         >
           {({ isActive }) => (
             <>
-              <span className={`text-[15px] font-semibold text-[${isActive ? "#c42050" : "rgba(255,255,255,0.35)"}]`}>
+              <span className="text-[15px] font-semibold" style={{ color: isActive ? "#c42050" : "var(--app-subtle)" }}>
                 {user?.username?.charAt(0).toUpperCase()}
               </span>
-              <span className={`font-['Inter',sans-serif] font-medium text-[15px] ${isActive ? "text-[#c42050]" : "text-[rgba(255,255,255,0.55)]"}`}>{ user?.username }</span>
+              <span className="font-['Inter',sans-serif] font-medium text-[15px]" style={{ color: isActive ? "#c42050" : "var(--app-muted)" }}>{ user?.username }</span>
             </>
           )}
         </NavLink>
@@ -121,9 +124,9 @@ function Sidebar() {
   
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M7 2H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4M12 13l4-4-4-4M16 9H7" stroke="rgba(255,255,255,0.3)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.4" />
+            <path d="M7 2H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4M12 13l4-4-4-4M16 9H7" stroke={inactiveIcon} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.4" />
           </svg>
-          <span className="font-['Inter',sans-serif] font-medium text-[14px] text-[rgba(255,255,255,0.3)]">Sign out</span>
+          <span className="font-['Inter',sans-serif] font-medium text-[14px]" style={{ color: "var(--app-subtle)" }}>Sign out</span>
         </button>
       </div>
     </div>
@@ -150,7 +153,7 @@ function AppHeader() {
 
 export default function AppLayout() {
   return (
-    <div className="bg-[#0a0608] relative min-h-screen w-full">
+    <div className="relative min-h-screen w-full transition-colors duration-200" style={{ background: "var(--app-bg)", color: "var(--app-text)" }}>
       {/* <DarkBackground /> */}
       <Sidebar />
       {/* Main content area */}

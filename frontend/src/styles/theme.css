@@ -1,7 +1,27 @@
 @custom-variant dark (&:is(.dark *));
 
+html {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+  --app-bg: #f6f3f5;
+  --app-surface: rgba(255, 255, 255, 0.86);
+  --app-text: #21141a;
+  --app-muted: rgba(33, 20, 26, 0.68);
+  --app-subtle: rgba(33, 20, 26, 0.44);
+  --app-border: rgba(72, 42, 54, 0.13);
+}
+
 :root {
   --font-size: 16px;
+  --app-bg: #0a0608;
+  --app-surface: rgba(10, 6, 8, 0.65);
+  --app-text: #ffffff;
+  --app-muted: rgba(255, 255, 255, 0.55);
+  --app-subtle: rgba(255, 255, 255, 0.35);
+  --app-border: rgba(255, 255, 255, 0.08);
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
@@ -126,6 +146,7 @@
 
   body {
     @apply bg-background text-foreground;
+    transition: background-color 180ms ease, color 180ms ease;
   }
 
   /**
@@ -177,5 +198,87 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+}
+
+@layer components {
+  .light body {
+    background: #f6f3f5;
+    color: #25171d;
+  }
+
+  .light .bg-\[\#0a0608\] {
+    background-color: #f6f3f5 !important;
+  }
+
+  .light [style*="rgba(10,6,8,0.65)"] {
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: blur(18px);
+  }
+
+  .light [class*="bg-[rgba(255,255,255,0.05)]"],
+  .light [class*="bg-[rgba(255,255,255,0.07)]"] {
+    background-color: rgba(255, 255, 255, 0.78) !important;
+    box-shadow: 0 10px 32px rgba(60, 31, 43, 0.07);
+  }
+
+  .light [class*="hover:bg-[rgba(255,255,255,0.03)]"]:hover,
+  .light [class*="hover:bg-[rgba(255,255,255,0.04)]"]:hover,
+  .light [class*="hover:bg-[rgba(255,255,255,0.05)]"]:hover,
+  .light [class*="hover:bg-[rgba(255,255,255,0.08)]"]:hover {
+    background-color: rgba(196, 32, 80, 0.07) !important;
+  }
+
+  .light [class*="border-[rgba(255,255,255,0.05)]"],
+  .light [class*="border-[rgba(255,255,255,0.06)]"],
+  .light [class*="border-[rgba(255,255,255,0.07)]"],
+  .light [class*="border-[rgba(255,255,255,0.08)]"],
+  .light [class*="border-[rgba(255,255,255,0.1)]"],
+  .light [class*="border-[rgba(255,255,255,0.15)]"] {
+    border-color: rgba(72, 42, 54, 0.13) !important;
+  }
+
+  .light [class*="text-white"] {
+    color: #21141a !important;
+  }
+
+  .light [class*="text-[rgba(255,255,255,0.85)]"],
+  .light [class*="text-[rgba(255,255,255,0.7)]"],
+  .light [class*="text-[rgba(255,255,255,0.6)]"],
+  .light [class*="text-[rgba(255,255,255,0.55)]"] {
+    color: rgba(33, 20, 26, 0.74) !important;
+  }
+
+  .light [class*="text-[rgba(255,255,255,0.5)]"],
+  .light [class*="text-[rgba(255,255,255,0.48)]"],
+  .light [class*="text-[rgba(255,255,255,0.45)]"],
+  .light [class*="text-[rgba(255,255,255,0.4)]"],
+  .light [class*="text-[rgba(255,255,255,0.35)]"],
+  .light [class*="text-[rgba(255,255,255,0.3)]"] {
+    color: rgba(33, 20, 26, 0.56) !important;
+  }
+
+  .light [class*="text-[rgba(255,255,255,0.28)]"],
+  .light [class*="text-[rgba(255,255,255,0.2)]"] {
+    color: rgba(33, 20, 26, 0.38) !important;
+  }
+
+  .light input,
+  .light textarea {
+    color: #21141a !important;
+  }
+
+  .light input::placeholder,
+  .light textarea::placeholder {
+    color: rgba(33, 20, 26, 0.36) !important;
+  }
+
+  .light svg path[stroke="white"],
+  .light svg circle[stroke="white"] {
+    stroke: rgba(33, 20, 26, 0.52);
+  }
+
+  .light svg path[fill="rgba(255,255,255,0.15)"] {
+    fill: rgba(33, 20, 26, 0.14);
   }
 }

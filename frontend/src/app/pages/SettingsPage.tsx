@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cardBase, Toggle } from "@/app/components/ui";
+import { useTheme } from "@/app/theme";
 
 type Settings = {
   pushNotifications: boolean;
@@ -41,13 +42,20 @@ const sections: { title: string; items: { key: keyof Settings; label: string; de
 ];
 
 export default function SettingsPage() {
+  const { darkMode, toggleTheme } = useTheme();
   const [s, setS] = useState<Settings>({
     pushNotifications: true,  safetyAlerts: true,  friendActivity: false,
     locationTracking:  true,  shareLocation: false, anonymousMode: false,
-    darkMode:          true,  hapticsEnabled: true, autoSave: true,
+    darkMode:          darkMode,  hapticsEnabled: true, autoSave: true,
   });
 
-  const toggle = (key: keyof Settings) => setS((p) => ({ ...p, [key]: !p[key] }));
+  const toggle = (key: keyof Settings) => {
+    if (key === "darkMode") {
+      toggleTheme();
+      return;
+    }
+    setS((p) => ({ ...p, [key]: !p[key] }));
+  };
 
   return (
     <>
@@ -70,7 +78,7 @@ export default function SettingsPage() {
                     <p className="font-['Inter',sans-serif] font-medium text-[14px] text-white">{item.label}</p>
                     <p className="font-['Inter',sans-serif] font-normal text-[12px] text-[rgba(255,255,255,0.35)] mt-[2px]">{item.desc}</p>
                   </div>
-                  <Toggle on={s[item.key]} onToggle={() => toggle(item.key)} />
+                  <Toggle on={item.key === "darkMode" ? darkMode : s[item.key]} onToggle={() => toggle(item.key)} />
                 </div>
               ))}
             </div>
