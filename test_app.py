@@ -258,6 +258,27 @@ class RoutePlanningTests(unittest.TestCase):
         self.assertLess(crowding_score, 95)
         self.assertTrue(any("park, trail" in signal for signal in signals))
 
+    def test_environment_details_separates_water_and_scenic_scores(self):
+        pois = {
+            "park": {"name": "Shoal Creek Trail", "categories": ["park", "trail"]},
+            "water": {"name": "Lady Bird Lake", "categories": ["lake"]},
+        }
+
+        with (
+            patch.object(safety_scoring, "TT_API_KEY", "tomtom-key"),
+            patch.object(safety_scoring, "collect_route_pois", return_value=(pois, False)),
+        ):
+            details = safety_scoring.calculate_environment_details(
+                [safety_scoring.LineString([[-97.743, 30.274], [-97.741, 30.274]]).interpolate(0)]
+            )
+
+        self.assertGreater(details["scenic_score"], 55)
+        self.assertGreater(details["water_score"], 55)
+        self.assertEqual(
+            details["water_proximity_score"],
+            max(details["water_score"], details["scenic_score"]),
+        )
+
     def test_missing_tomtom_key_returns_partial_fallback_breakdown(self):
         route = {"coordinates": [[-97.743, 30.274], [-97.741, 30.274]]}
 
@@ -519,6 +540,44 @@ class RoutePlanningTests(unittest.TestCase):
 
         self.assertGreater(dry_score, water_heavy_score)
         self.assertIn("away from water", dry_summary)
+
+    def test_user_preferences_can_prefer_parks_while_avoiding_water(self):
+        search = RouteSearchRequest(
+            start="AA",
+            destination="BB",
+            preferences_description="I want parks and scenic trails but not near water.",
+        )
+        dry_scenic_route = {
+            "route_profile": "scenic",
+            "estimated_minutes": 14,
+            "safety_breakdown": {
+                "water_score": 20,
+                "scenic_score": 90,
+                "water_proximity_score": 90,
+                "crowding_score": 80,
+            },
+        }
+        wet_scenic_route = {
+            "route_profile": "scenic",
+            "estimated_minutes": 12,
+            "safety_breakdown": {
+                "water_score": 95,
+                "scenic_score": 90,
+                "water_proximity_score": 95,
+                "crowding_score": 80,
+            },
+        }
+
+        dry_score, dry_summary = route_planner.route_preference_score(
+            dry_scenic_route, search
+        )
+        wet_score, _ = route_planner.route_preference_score(
+            wet_scenic_route, search
+        )
+
+        self.assertGreater(dry_score, wet_score)
+        self.assertIn("away from water", dry_summary)
+        self.assertIn("scenic", dry_summary)
 
     def test_preference_description_infers_route_weights(self):
         search = RouteSearchRequest(

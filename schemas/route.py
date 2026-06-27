@@ -20,6 +20,8 @@ class SafetyBreakdown(BaseModel):
     incident_score: int = Field(ge=0, le=100)
     crime_score: int = Field(ge=0, le=100)
     water_proximity_score: int = Field(ge=0, le=100)
+    water_score: int = Field(default=70, ge=0, le=100)
+    scenic_score: int = Field(default=70, ge=0, le=100)
     crowding_score: int = Field(ge=0, le=100)
     signals: list[str] = Field(default_factory=list)
 

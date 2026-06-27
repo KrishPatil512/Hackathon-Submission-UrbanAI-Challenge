@@ -217,7 +217,12 @@ def route_preference_score(route: dict, search: RouteSearchRequest) -> tuple[int
     summary_parts = []
 
     if weights["water"]:
-        water_score = float(breakdown.get("water_proximity_score", 70))
+        water_score = float(
+            breakdown.get(
+                "water_score",
+                breakdown.get("water_proximity_score", 70),
+            )
+        )
         if weights.get("water_mode") == "avoid":
             score = 100 - water_score
             summary_parts.append("away from water")
@@ -228,8 +233,18 @@ def route_preference_score(route: dict, search: RouteSearchRequest) -> tuple[int
         weight_total += weights["water"]
 
     if weights["scenic"]:
-        profile_bonus = 12 if route.get("route_profile") == "scenic" else 0
-        scenic_score = min(100, float(breakdown.get("water_proximity_score", 70)) + profile_bonus)
+        profile = route.get("route_profile")
+        profile_bonus = 12 if profile == "scenic" else 5 if profile in {"quiet", "balanced"} else 0
+        scenic_score = min(
+            100,
+            float(
+                breakdown.get(
+                    "scenic_score",
+                    breakdown.get("water_proximity_score", 70),
+                )
+            )
+            + profile_bonus,
+        )
         if weights.get("scenic_mode") == "avoid":
             score = 100 - scenic_score
             summary_parts.append("less scenic")

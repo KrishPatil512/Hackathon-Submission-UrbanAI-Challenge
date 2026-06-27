@@ -27,6 +27,8 @@ function fallbackBreakdown(score: number) {
     incident_score: percentScore,
     crime_score: percentScore,
     water_proximity_score: percentScore,
+    water_score: percentScore,
+    scenic_score: percentScore,
     crowding_score: percentScore,
     signals: ["Detailed safety metrics are not available for this older route."],
   };
@@ -146,7 +148,8 @@ export default function RouteDetailPage() {
     { subject: "Traffic", score: safetyBreakdown.traffic_score },
     { subject: "Incidents", score: safetyBreakdown.incident_score },
     { subject: "Crime", score: safetyBreakdown.crime_score },
-    { subject: "Water", score: safetyBreakdown.water_proximity_score },
+    { subject: "Water", score: safetyBreakdown.water_score ?? safetyBreakdown.water_proximity_score },
+    { subject: "Scenic", score: safetyBreakdown.scenic_score ?? safetyBreakdown.water_proximity_score },
     { subject: "Crowding", score: safetyBreakdown.crowding_score },
   ];
 
@@ -256,7 +259,8 @@ export default function RouteDetailPage() {
                 <ScoreRow label="Traffic" score={safetyBreakdown.traffic_score} />
                 <ScoreRow label="Incidents" score={safetyBreakdown.incident_score} />
                 <ScoreRow label="Crime" score={safetyBreakdown.crime_score} />
-                <ScoreRow label="Water / Scenic" score={safetyBreakdown.water_proximity_score} />
+                <ScoreRow label="Water" score={safetyBreakdown.water_score ?? safetyBreakdown.water_proximity_score} />
+                <ScoreRow label="Scenic" score={safetyBreakdown.scenic_score ?? safetyBreakdown.water_proximity_score} />
                 <ScoreRow label="Crowding" score={safetyBreakdown.crowding_score} />
                 <div className="pt-[4px] flex flex-col gap-[6px]">
                   {safetyBreakdown.signals.map((signal) => (

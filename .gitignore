@@ -19,3 +19,6 @@ maps/
 **/.vite/
 **/.vite-temp/
 **/.cache/
+
+.vercel
+.env*

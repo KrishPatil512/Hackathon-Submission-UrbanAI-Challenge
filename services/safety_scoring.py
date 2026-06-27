@@ -329,24 +329,44 @@ def collect_route_pois(sampled_points) -> tuple[dict[str, dict], bool]:
     return pois, had_error
 
 
-def calculate_environment_scores(sampled_points) -> tuple[int, int, list[str]]:
+def calculate_environment_details(sampled_points) -> dict:
     if not TT_API_KEY or not sampled_points:
-        return 70, 70, ["POI context unavailable"]
+        return {
+            "water_proximity_score": 70,
+            "water_score": 70,
+            "scenic_score": 70,
+            "crowding_score": 70,
+            "signals": ["POI context unavailable"],
+        }
 
     pois, had_error = collect_route_pois(sampled_points)
     if not pois and had_error:
-        return 70, 70, ["POI context unavailable"]
+        return {
+            "water_proximity_score": 70,
+            "water_score": 70,
+            "scenic_score": 70,
+            "crowding_score": 70,
+            "signals": ["POI context unavailable"],
+        }
 
     water_terms = {
         "water",
         "lake",
         "river",
+        "creek",
+        "pond",
         "reservoir",
         "beach",
+        "shore",
+        "waterfront",
+    }
+    scenic_terms = {
         "park",
         "trail",
         "scenic",
         "nature reserve",
+        "green space",
+        "viewpoint",
     }
     crowd_terms = {
         "restaurant",
@@ -359,22 +379,31 @@ def calculate_environment_scores(sampled_points) -> tuple[int, int, list[str]]:
     }
 
     water_count = 0
+    scenic_count = 0
     crowd_count = 0
     for poi in pois.values():
         category_text = " ".join(poi["categories"])
         if any(term in category_text for term in water_terms):
             water_count += 1
+        if any(term in category_text for term in scenic_terms):
+            scenic_count += 1
         if any(term in category_text for term in crowd_terms):
             crowd_count += 1
 
     water_score = clamp_score(55 + min(water_count, 8) * 6)
+    scenic_score = clamp_score(55 + min(scenic_count, 8) * 6)
+    water_proximity_score = max(water_score, scenic_score)
     crowding_score = clamp_score(95 - min(crowd_count, 10) * 5)
 
     signals = []
     if water_count:
-        signals.append(f"{water_count} park, trail, scenic, or water POI{'s' if water_count != 1 else ''} nearby")
+        signals.append(f"{water_count} water feature POI{'s' if water_count != 1 else ''} nearby")
     else:
-        signals.append("Limited park, trail, scenic, or water POIs nearby")
+        signals.append("Limited water feature POIs nearby")
+    if scenic_count:
+        signals.append(f"{scenic_count} park, trail, or scenic POI{'s' if scenic_count != 1 else ''} nearby")
+    else:
+        signals.append("Limited park, trail, or scenic POIs nearby")
     if crowd_count:
         signals.append(f"{crowd_count} crowding-related POI{'s' if crowd_count != 1 else ''} nearby")
     else:
@@ -382,7 +411,22 @@ def calculate_environment_scores(sampled_points) -> tuple[int, int, list[str]]:
     if had_error:
         signals.append("Some POI checks unavailable")
 
-    return water_score, crowding_score, signals
+    return {
+        "water_proximity_score": water_proximity_score,
+        "water_score": water_score,
+        "scenic_score": scenic_score,
+        "crowding_score": crowding_score,
+        "signals": signals,
+    }
+
+
+def calculate_environment_scores(sampled_points) -> tuple[int, int, list[str]]:
+    details = calculate_environment_details(sampled_points)
+    return (
+        details["water_proximity_score"],
+        details["crowding_score"],
+        details["signals"],
+    )
 
 
 def calculate_overall_score(breakdown: dict) -> int:
@@ -404,6 +448,8 @@ def calculate_safety_breakdown(route: dict) -> dict:
             "incident_score": base_score,
             "crime_score": base_score,
             "water_proximity_score": base_score,
+            "water_score": base_score,
+            "scenic_score": base_score,
             "crowding_score": base_score,
             "signals": ["Sample route uses fallback safety estimates"],
         }
@@ -414,15 +460,17 @@ def calculate_safety_breakdown(route: dict) -> dict:
     traffic_score, traffic_signals = calculate_traffic_score(route, sampled_points)
     incident_score, incident_signals = calculate_incident_score(route)
     crime_score, crime_signals = calculate_crime_score(route)
-    water_score, crowding_score, environment_signals = calculate_environment_scores(sampled_points)
+    environment = calculate_environment_details(sampled_points)
 
     breakdown = {
         "traffic_score": traffic_score,
         "incident_score": incident_score,
         "crime_score": crime_score,
-        "water_proximity_score": water_score,
-        "crowding_score": crowding_score,
-        "signals": traffic_signals + incident_signals + crime_signals + environment_signals,
+        "water_proximity_score": environment["water_proximity_score"],
+        "water_score": environment["water_score"],
+        "scenic_score": environment["scenic_score"],
+        "crowding_score": environment["crowding_score"],
+        "signals": traffic_signals + incident_signals + crime_signals + environment["signals"],
     }
     breakdown["overall_score"] = calculate_overall_score(breakdown)
     return breakdown

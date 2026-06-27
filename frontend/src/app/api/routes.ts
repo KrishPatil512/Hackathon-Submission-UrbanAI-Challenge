@@ -19,6 +19,8 @@ export interface SafetyBreakdown {
   incident_score: number;
   crime_score: number;
   water_proximity_score: number;
+  water_score?: number;
+  scenic_score?: number;
   crowding_score: number;
   signals: string[];
 }
