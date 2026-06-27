@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}SafeWalkers | Safer routes together{% endblock %}
+
+{% block content %}
+  <div class="landing-shell">
+    <header class="landing-nav">
+      <a class="landing-brand" href="/">
+        <img src="{{ url_for('static', path='/images/brand-wordmark.webp') }}" alt="SafeWalkers" />
+      </a>
+      <nav aria-label="Public navigation">
+        <a href="/about">About</a>
+        <a href="/explore">Explore</a>
+        <a href="/login">Sign in</a>
+        <a class="button button-small" href="/signup">Get started</a>
+      </nav>
+    </header>
+
+    <section class="landing-hero">
+      <div class="landing-copy">
+        <p class="eyebrow">Safer routes, stronger communities</p>
+        <h1>Move through your city with more confidence.</h1>
+        <p class="lede">Compare walking and biking routes using safety context, community knowledge, and the details that matter before you step outside.</p>
+        <div class="actions">
+          <a class="button" href="/signup">Get started safely <span aria-hidden="true">→</span></a>
+          <a class="button secondary" href="/generate">Try route search</a>
+        </div>
+        <div class="landing-proof" aria-label="SafeWalkers benefits">
+          <span><strong>Safety-first</strong> route scores</span>
+          <span><strong>Community</strong> route reviews</span>
+          <span><strong>Simple</strong> route saving</span>
+        </div>
+      </div>
+      <div class="landing-visual" aria-label="SafeWalkers route preview">
+        <div class="glow-orb"></div>
+        <img class="landing-walker" src="{{ url_for('static', path='/images/walker.webp') }}" alt="Glossy red walking figure" />
+        <article class="floating-card floating-card-score">
+          <small>Area safety index</small>
+          <strong>9.1</strong>
+          <span>Low crime · well lit</span>
+        </article>
+        <article class="floating-card floating-card-route">
+          <small>Recommended route</small>
+          <strong>Riverside Walk</strong>
+          <span>3.2 mi · 8.9 safety</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="feature-strip" aria-label="SafeWalkers features">
+      <article><span>01</span><h2>Compare safer options</h2><p>Review distance, time, and safety context side by side.</p></article>
+      <article><span>02</span><h2>Learn from walkers</h2><p>Discover shared routes, local notes, ratings, and likes.</p></article>
+      <article><span>03</span><h2>Keep what works</h2><p>Save useful routes and add personal comments and tags.</p></article>
+    </section>
+  </div>
+{% endblock %}

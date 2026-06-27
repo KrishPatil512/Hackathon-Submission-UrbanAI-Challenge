@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in | SafeWalkers{% endblock %}
+
+{% block content %}
+  <section class="auth-shell">
+    <div class="auth-visual">
+      <a class="auth-brand" href="/"><img src="{{ url_for('static', path='/images/brand-wordmark.webp') }}" alt="SafeWalkers" /></a>
+      <img class="auth-walker" src="{{ url_for('static', path='/images/walker.webp') }}" alt="Glossy red walking figure" />
+      <div>
+        <h1>Welcome to SafeWalkers</h1>
+        <p>Your trusted companion for safer pedestrian routes.</p>
+      </div>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-card">
+        <p class="eyebrow">Welcome back</p>
+        <h2>Sign in</h2>
+        <p class="form-note">Your city is waiting.</p>
+        <form action="/login" method="post">
+          {% if error %}<p class="alert error">{{ error }}</p>{% endif %}
+          {% if message %}<p class="alert success">{{ message }}</p>{% endif %}
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" minlength="2" maxlength="30" autocomplete="username" placeholder="Enter your username" required />
+          <label for="password">Password</label>
+          <div class="password-field">
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+            <button type="button" data-password-toggle aria-label="Show password">◉</button>
+          </div>
+          <p class="form-note">Password recovery is not available in this prototype.</p>
+          <button class="button button-wide" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="auth-switch">Don’t have an account? <a href="/signup">Sign up</a></p>
+      </div>
+    </div>
+  </section>
+{% endblock %}

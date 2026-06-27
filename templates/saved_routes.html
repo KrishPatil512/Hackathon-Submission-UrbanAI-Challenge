@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Routes | SafeWalkers{% endblock %}
+
+{% block content %}
+  <header class="page-header"><div><p class="eyebrow">Your collection</p><h1>Saved routes</h1><p>Keep the routes you trust, along with your notes and tags.</p></div><a class="button" href="/generate">Find a route</a></header>
+  {% if saved_routes %}<section class="route-grid">{% for route in saved_routes %}{% include "partials/route_card.html" %}{% endfor %}</section>
+  {% else %}<section class="empty-state"><span class="empty-icon">♡</span><h2>No saved routes yet.</h2><p>Explore route options and save the ones worth walking again.</p><a class="button" href="/generate">Find your first route</a></section>{% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Find a Route | SafeWalkers{% endblock %}
+
+{% block content %}
+  <header class="page-header"><div><p class="eyebrow">Route planner</p><h1>Where are you heading?</h1><p>Compare safer walking and biking options across Austin.</p></div></header>
+  <section class="planner-layout">
+    <form class="panel planner-form" action="/routes/results" method="post">
+      {% if error %}<p class="alert error">{{ error }}</p>{% endif %}
+      <div class="location-field start-field"><span aria-hidden="true"></span><div><label for="start">Start location</label><input id="start" name="start" type="text" placeholder="UT Austin" list="start-suggestions" autocomplete="off" required /></div></div>
+      <datalist id="start-suggestions"></datalist>
+      <div class="route-connector" aria-hidden="true"></div>
+      <div class="location-field end-field"><span aria-hidden="true"></span><div><label for="destination">Destination</label><input id="destination" name="destination" type="text" placeholder="Austin Central Library" list="destination-suggestions" autocomplete="off" required /></div></div>
+      <datalist id="destination-suggestions"></datalist>
+      <fieldset class="travel-selector"><legend>Travel type</legend><label><input type="radio" name="route_type" value="walking" checked /><span>Walking</span></label><label><input type="radio" name="route_type" value="biking" /><span>Biking</span></label></fieldset>
+      <button class="button button-wide" type="submit">Compare safe routes <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="planner-preview">
+      <img src="{{ url_for('static', path='/images/route-map.webp') }}" alt="Dark map of central Austin" />
+      <div class="map-overlay"><span class="map-pin pin-start"></span><span class="map-pin pin-end"></span><span class="preview-route-line"></span></div>
+      <article class="map-tip"><small>Safety tip</small><strong>Well-lit paths rank higher after dark.</strong><span>Route scores combine several local factors.</span></article>
+    </div>
+  </section>
+{% endblock %}
