@@ -3,6 +3,8 @@
 SafeWalkers helps Austin residents, commuters, and visitors find safer and more
 enjoyable walking routes to their destinations.
 
+Video : https://studio.youtube.com/video/9uMjbtUXlFc/edit
+
 ## Project shape
 
 This is a lightweight React + FastAPI app for a 1-2 month prototype. React is
@@ -11,22 +13,22 @@ and prototype storage remains in JSON files behind repository modules.
 
 ## Run locally
 
-```powershell
+powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -e .
 npm ci --prefix frontend
 npm run build --prefix frontend
 fastapi dev main.py
-```
 
-Then open `http://127.0.0.1:8000`
+
+Then open   :    http://127.0.0.1:8000
 a
 For frontend hot reload, keep FastAPI running and start Vite in a second terminal:
 
-```powershell
+powershell
 npm run dev --prefix frontend
-```
+
 
 Then open `http://127.0.0.1:5173`. Vite proxies API, map, and static requests to
 FastAPI on port 8000.
@@ -45,5 +47,4 @@ FastAPI on port 8000.
 - `data`: prototype JSON data
 - `docs`: architecture and team notes
 
-Passwords are still hashed before they are saved. That keeps the prototype
-simple for the team while avoiding plain text passwords in `data/users.json`.
+
