@@ -14,11 +14,17 @@ and prototype storage remains in JSON files behind repository modules.
 ## Run locally
 
 powershell
+
 python -m venv .venv
+
 .venv\Scripts\Activate.ps1
+
 pip install -e .
+
 npm ci --prefix frontend
+
 npm run build --prefix frontend
+
 fastapi dev main.py
 
 
