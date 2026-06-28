@@ -3,7 +3,7 @@
 SafeWalkers helps Austin residents, commuters, and visitors find safer and more
 enjoyable walking routes to their destinations.
 
-Video : https://studio.youtube.com/video/9uMjbtUXlFc/edit
+Video : https://youtu.be/9uMjbtUXlFc
 
 ## Project shape
 
