@@ -5,6 +5,15 @@ enjoyable walking routes to their destinations.
 
 Video : https://youtu.be/9uMjbtUXlFc
 
+## AI/ML component
+
+SafeWalkers includes a lightweight local `scikit-learn` preference classifier in
+`services/preference_classifier.py`. The model uses TF-IDF text features and a
+logistic-regression one-vs-rest classifier to classify free-text route requests
+into routing weights for safety, scenic paths, water proximity, and crowd levels.
+Those ML-generated weights feed the existing route ranking system in
+`services/route_planner.py`, with rule-based matching kept as a fallback.
+
 ## Project shape
 
 This is a lightweight React + FastAPI app for a 1-2 month prototype. React is

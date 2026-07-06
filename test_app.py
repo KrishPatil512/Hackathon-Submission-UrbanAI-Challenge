@@ -198,18 +198,21 @@ class SpaHostingTests(unittest.TestCase):
 
 class RoutePlanningTests(unittest.TestCase):
     def test_incidents_lower_incident_score(self):
-        with patch.object(
-            safety_scoring,
-            "fetch_incidents",
-            return_value=[
-                {
-                    "properties": {
-                        "iconCategory": "Accident",
-                        "magnitudeOfDelay": 3,
-                        "delay": 600,
+        with (
+            patch.object(safety_scoring, "TT_API_KEY", "tomtom-key"),
+            patch.object(
+                safety_scoring,
+                "fetch_incidents",
+                return_value=[
+                    {
+                        "properties": {
+                            "iconCategory": "Accident",
+                            "magnitudeOfDelay": 3,
+                            "delay": 600,
+                        }
                     }
-                }
-            ],
+                ],
+            ),
         ):
             score, signals = safety_scoring.calculate_incident_score(
                 {"coordinates": [[-97.742, 30.274], [-97.739, 30.286]]}
@@ -503,6 +506,33 @@ class RoutePlanningTests(unittest.TestCase):
         self.assertGreater(watery_score, direct_score)
         self.assertIn("water", watery_summary)
         self.assertIn("low-crowd", watery_summary)
+
+    def test_preference_description_uses_ml_classifier_weights(self):
+        search = RouteSearchRequest(
+            start="AA",
+            destination="BB",
+            preferences_description="Prioritize comfort after dark.",
+        )
+
+        with patch.object(
+            route_planner,
+            "classify_preference_text",
+            return_value={
+                "water": 0,
+                "scenic": 2,
+                "crowds": 4,
+                "safety": 5,
+                "water_mode": "seek",
+                "scenic_mode": "seek",
+                "crowd_mode": "avoid",
+            },
+        ):
+            weights = route_planner.inferred_preference_weights(search)
+
+        self.assertEqual(weights["safety"], 5)
+        self.assertEqual(weights["crowds"], 4)
+        self.assertEqual(weights["crowd_mode"], "avoid")
+        self.assertEqual(weights["scenic"], 2)
 
     def test_user_preferences_avoid_water_rank_low_water_routes_higher(self):
         search = RouteSearchRequest(

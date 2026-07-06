@@ -2,6 +2,7 @@ from core.config import settings
 from repositories.json_store import read_list
 from schemas.route import RouteOption, RouteSearchRequest
 from services.geocoding import normalize_place_name
+from services.preference_classifier import classify_preference_text
 from services.safety_scoring import calculate_safety_breakdown, calculate_safety_score, describe_score
 import requests
 import os
@@ -126,6 +127,17 @@ def inferred_preference_weights(search: RouteSearchRequest) -> dict[str, int | s
         "crowd_mode": "avoid",
     }
     text = search.preferences_description.lower().replace("’", "'")
+
+    ml_weights = classify_preference_text(search.preferences_description)
+    if ml_weights:
+        for key in ("water", "scenic", "crowds", "safety"):
+            weights[key] = max(int(weights[key]), int(ml_weights[key]))
+        if ml_weights["water"]:
+            weights["water_mode"] = ml_weights["water_mode"]
+        if ml_weights["scenic"]:
+            weights["scenic_mode"] = ml_weights["scenic_mode"]
+        if ml_weights["crowds"]:
+            weights["crowd_mode"] = ml_weights["crowd_mode"]
 
     keyword_groups = {
         "water": [
